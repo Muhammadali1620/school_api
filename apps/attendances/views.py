@@ -1,6 +1,7 @@
 import calendar
-from django.utils.timezone import now
 
+from django.utils.timezone import now
+from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 
 from rest_framework.views import APIView
@@ -10,7 +11,6 @@ from apps.attendances.models import Attendance
 from apps.attendances.serializers import AttendanceSerializer
 from apps.users.models import CustomUser
 from apps.users.permissions import AddAttendancePermission
-from django.shortcuts import get_object_or_404
 
 
 class AttendanceCreateAPIVew(APIView):
@@ -63,8 +63,6 @@ class AttendanceCreateAPIVew(APIView):
             context['students'] = []
         
         if request.user.role == CustomUser.Role.TEACHER and group_id.isdigit() and int(group_id) != request.user.teacher_groups.first().id:
-            print(group_id)
-            print(request.user.teacher_groups.first().id)
             return Response({'message': 'You do not have permission to access this resource.'}, status=403)
         
         return Response(context, status=200)
